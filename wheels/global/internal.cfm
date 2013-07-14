@@ -32,7 +32,12 @@
 			request.wheels.cacheCounts.misses = 0;
 			request.wheels.cacheCounts.culls = 0;
 		}
-		session.wheels.reload.AJAXtoken = CreateUUID();
+		// only do this if we are up and running, this gets called in OnApplicationStart b4 OmSessionStart is run
+		if (StructKeyExists(application, "wheels"))
+		{
+			session.wheels.reload.AJAXtoken = session.wheels.reload.nextAJAXtoken;
+			session.wheels.reload.nextAJAXtoken = CreateUUID();
+		}
 	</cfscript>
 </cffunction>
 

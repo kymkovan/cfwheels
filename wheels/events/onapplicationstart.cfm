@@ -42,7 +42,7 @@
 		
 		// load any saved settings from the previous reload
 		StructAppend(application.wheels, loc.savedSettings, true);
-		application.wheels.reload = {flushSerial=this.variables.flushSerial, doReload=False};
+		application.wheels.reload = {flushSerial=this.variables.flushSerial, doReload=False, reloadTime=Now()};
 
 		// copy over the cgi variables we need to the request scope (since we use some of these to determine URL rewrite capabilities we need to be able to access them directly on application start for example)
 		request.cgi = $cgiScope();
