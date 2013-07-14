@@ -1,5 +1,6 @@
-<cffunction name="onRequestStart" returntype="void" access="public" output="false">
+<cffunction name="onRequestStart" returntype="void" access="public" output="yes">
 	<cfargument name="targetPage" type="any" required="true">
+
 	<cfscript>
 		// abort if called from incorrect file
 		$abortInvalidRequest();
@@ -13,7 +14,7 @@
 		$initializeRequestScope();
 
 		// reload application by calling onApplicationStart if requested
-		if (StructKeyExists(URL, "reload") && (!StructKeyExists(application, "wheels") || !StructKeyExists(application.wheels, "reloadPassword") || !Len(application.wheels.reloadPassword) || (StructKeyExists(URL, "password") && URL.password == application.wheels.reloadPassword)))
+		if (StructKeyExists(URL, "reload") && (!StructKeyExists(application, "wheels") || !StructKeyExists(application.wheels, "reloadPassword") || !Len(application.wheels.reloadPassword) || (StructKeyExists(URL, "password") && URL.password == application.wheels.reloadPassword)) || application.wheels.reload.flushSerial != this.variables.flushSerial || application.wheels.reload.doReload)
 		{
 			$debugPoint("total,reload");
 			$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);

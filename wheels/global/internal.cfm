@@ -32,6 +32,7 @@
 			request.wheels.cacheCounts.misses = 0;
 			request.wheels.cacheCounts.culls = 0;
 		}
+		session.wheels.reload.AJAXtoken = CreateUUID();
 	</cfscript>
 </cffunction>
 
