@@ -15,10 +15,19 @@
 		$initializeRequestScope();
 
 		// reload application by calling onApplicationStart if requested
-		if (StructKeyExists(URL, "reload"))
+		if (!StructKeyExists(application, "wheels") || !StructKeyExists(session, "wheels") || application.wheels.reload.flushSerial != this.variables.flushSerial)
+		{
+			application.wheels.reload.doReload = true;
+		}
+		else if (StructKeyExists(URL, "reload"))
 		{
 			loc.reloadParams = decrypt(URL.reLoad, "#application.applicationName#");
-			if (!StructKeyExists(application, "wheels") || !StructKeyExists(session, "wheels") || listFirst(loc.reloadParams) == session.wheels.reload.AJAXtoken || application.wheels.reload.flushSerial != this.variables.flushSerial || application.wheels.reload.doReload)
+			if (listFirst(loc.reloadParams) == session.wheels.reload.AJAXtoken)
+			{
+				application.wheels.reload.doReload = true;
+			}
+		}
+		if (application.wheels.reload.doReload)
 			{
 				$debugPoint("total,reload");
 				$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);
