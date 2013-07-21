@@ -2,6 +2,7 @@
 	<cfargument name="targetPage" type="any" required="true">
 
 	<cfscript>
+		var loc = {};
 		// abort if called from incorrect file
 		$abortInvalidRequest();
 
@@ -14,10 +15,14 @@
 		$initializeRequestScope();
 
 		// reload application by calling onApplicationStart if requested
-		if (StructKeyExists(URL, "reload") && (!StructKeyExists(application, "wheels") || !StructKeyExists(session, "wheels") || URL.reLoad == session.wheels.reload.AJAXtoken) || application.wheels.reload.flushSerial != this.variables.flushSerial || application.wheels.reload.doReload)
+		if (StructKeyExists(URL, "reload"))
 		{
-			$debugPoint("total,reload");
-			$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);
+			loc.reloadParams = decrypt(URL.reLoad, "#application.applicationName#");
+			if (!StructKeyExists(application, "wheels") || !StructKeyExists(session, "wheels") || listFirst(loc.reloadParams) == session.wheels.reload.AJAXtoken || application.wheels.reload.flushSerial != this.variables.flushSerial || application.wheels.reload.doReload)
+			{
+				$debugPoint("total,reload");
+				$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);
+			}
 		}
 
 		// run the rest of the request start code

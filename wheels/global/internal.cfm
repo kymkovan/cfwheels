@@ -32,11 +32,12 @@
 			request.wheels.cacheCounts.misses = 0;
 			request.wheels.cacheCounts.culls = 0;
 		}
-		// only do this if we are up and running, this gets called in OnApplicationStart b4 OmSessionStart is run
+		// only do this if we are up and running, this gets called in OnApplicationStart b4 OmSessionStart has run
 		if (StructKeyExists(application, "wheels"))
 		{
+			session.wheels.reload.updateTime = TimeFormat(Now(), "HH:mm");
 			session.wheels.reload.AJAXtoken = session.wheels.reload.nextAJAXtoken;
-			session.wheels.reload.nextAJAXtoken = CreateUUID();
+			session.wheels.reload.nextAJAXtoken = left(CreateUUID(), 8);
 		}
 	</cfscript>
 </cffunction>
@@ -999,6 +1000,7 @@ Should now call bar() instead and marking foo() as deprecated
 	<cfargument name="settingPasswordToSwitchEnvironmentKey" type="string" required="false" default="reloadPassword" hint="the setting that tell us the password for switching environments">
 	<cfargument name="scopeEnvironmentNamingKey" type="string" required="false" default="reload" hint="the key in the scope that gives us the environment name to switch to">
 	<cfargument name="scopeEnvironmentPasswordKey" type="string" required="false" default="password" hint="the key in the scope that gives us the password for switching environment">
+	<cfargument name="scopeEnvironmentEncrypted" type="string" required="false" default="true" hint="the key in the scope that gives us the password for switching environment">
 	<cfscript>
 	var loc = {};
 
@@ -1025,6 +1027,13 @@ Should now call bar() instead and marking foo() as deprecated
 	
 	if (StructKeyExists(arguments.scope, arguments.scopeEnvironmentNamingKey))
 	{
+		if (arguments.scopeEnvironmentEncrypted) 
+		{
+			loc.environment = ListLast(decrypt(arguments.scope[arguments.scopeEnvironmentNamingKey], "#application.applicationName#"));
+			if (loc.environment == "bare"){
+				loc.environment = "";
+			}
+		}
 		loc.scope_environment = arguments.scope[arguments.scopeEnvironmentNamingKey];
 	}
 	
