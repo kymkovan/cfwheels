@@ -7,7 +7,7 @@
 <cffunction name="$runOnSessionStart" returntype="void" access="public" output="false">
 	<cfscript>
 		session.wheels = {};
-		session.wheels.reload = {AJAXtoken="", nextAJAXtoken="", updateTime = ""};
+		session.wheels.reload = {AJAXtoken="", nextAJAXtoken=left(CreateUUID(), 8), updateTime = ""};
 		$initializeRequestScope();
 		$include(template="#application.wheels.eventPath#/onsessionstart.cfm");
 	</cfscript>

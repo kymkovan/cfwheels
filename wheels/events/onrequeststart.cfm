@@ -28,10 +28,9 @@
 			}
 		}
 		if (application.wheels.reload.doReload)
-			{
-				$debugPoint("total,reload");
-				$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);
-			}
+		{
+			$debugPoint("total,reload");
+			$simpleLock(execute="onApplicationStart", name="wheelsReloadLock", type="exclusive", timeout=180);
 		}
 
 		// run the rest of the request start code

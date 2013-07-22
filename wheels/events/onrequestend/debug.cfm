@@ -1,13 +1,8 @@
-<cfset loc.baseReloadURL = cgi.script_name>
+<cfsilent>
+<cfset loc.baseReloadURL = cgi.script_name />
 <cfif cgi.path_info IS NOT cgi.script_name>
-	<cfset loc.baseReloadURL = loc.baseReloadURL & cgi.path_info>
+	<cfset loc.baseReloadURL = loc.baseReloadURL & cgi.path_info />
 </cfif>
-
-<cfdump var="#url#" expand="false" label="url" /> 
-<cfdump var="#loc#" expand="false" label="loc b4" /> 
-<!--- 
-<cfdump var="#application#" expand="false" label="application" abort="true" /> 
- --->
 <!--- store and remove the reload param from the query string --->
 <cfif Len(cgi.query_string)>
 	<cfset loc.queryString = replaceNoCase(cgi.query_string, "&amp;", "&", "all") />
@@ -20,39 +15,26 @@
 		<cfset loc.baseReloadURL = loc.baseReloadURL & "?" & loc.queryString />
 	</cfif>
 </cfif>
-<cfset loc.baseReloadURL = ReplaceNoCase(loc.baseReloadURL, "/" & application.wheels.rewriteFile, "")>
-
-<cfdump var="#loc#" expand="false" label="loc mid1" /> 
-
-<!--- now set the various encrypted reload strings --->
-<cfset loc.enc = {
-	bare=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,bare", "#application.applicationName#")),
-	design=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,design", "#application.applicationName#")),
-	development=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,development", "#application.applicationName#")),
-	testing=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,testing", "#application.applicationName#")),
-	maintenance=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,maintenance", "#application.applicationName#")),
-	production=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,production", "#application.applicationName#"))
-	} />
-<!--- 
-<cfloop list="design,development,testing,maintenance,production,true" index="loc.i">
-	<cfset loc.baseReloadURL = ReplaceNoCase(ReplaceNoCase(loc.baseReloadURL, "?reload=" & loc.i, ""), "&reload=" & loc.i, "")>
-</cfloop>
- --->
+<cfset loc.baseReloadURL = ReplaceNoCase(loc.baseReloadURL, "/" & application.wheels.rewriteFile, "") />
 <cfif loc.baseReloadURL Contains "?">
-	<cfset loc.baseReloadURL = loc.baseReloadURL & "&">
+	<cfset loc.baseReloadURL = loc.baseReloadURL & "&" />
 <cfelse>
-	<cfset loc.baseReloadURL = loc.baseReloadURL & "?">
+	<cfset loc.baseReloadURL = loc.baseReloadURL & "?" />
 </cfif>
-
-<cfdump var="#loc#" expand="false" label="loc mid2" /> 
-
-<cfset loc.baseReloadURL = loc.baseReloadURL & "reload=">
-<cfset loc.hasFrameworkTests = StructKeyExists(this, "mappings") && StructKeyExists(this.mappings, "/wheelsMapping") && DirectoryExists(expandPath("/wheelsMapping/tests"))>
-<cfset loc.hasAppTests = DirectoryExists(expandPath("#get('webPath')#/tests"))>
-<cfset loc.hasBuilders = DirectoryExists(expandPath("#get('webPath')#/builders"))>
-
-<cfdump var="#loc#" expand="false" label="loc after" /> 
-
+<cfset loc.baseReloadURL = loc.baseReloadURL & "reload=" />
+<cfset loc.hasFrameworkTests = StructKeyExists(this, "mappings") && StructKeyExists(this.mappings, "/wheelsMapping") && DirectoryExists(expandPath("/wheelsMapping/tests")) />
+<cfset loc.hasAppTests = DirectoryExists(expandPath("#get('webPath')#/tests")) />
+<cfset loc.hasBuilders = DirectoryExists(expandPath("#get('webPath')#/builders")) />
+<!--- now set the various encrypted reload strings --->
+<cfset loc.environments = "design,development,testing,maintenance,production" />
+<cfset loc.enc = {
+	bare=$URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,bare", "#application.applicationName#"))
+	} />
+<cfloop list="#loc.environments#" index="loc.i">
+	<cfset loc.enc[loc.i] = $URLencode(encrypt("#session.wheels.reload.nextAJAXtoken#,#session.wheels.reload.updateTime#,#loc.i#", "#application.applicationName#")) />
+</cfloop>
+<cfset loc.pos = 0 />
+</cfsilent>
 <cfoutput>
 
 <style type="text/css">
@@ -133,7 +115,7 @@
 		</tr>
 		<tr>
 			<td valign="top"><strong>Active Environment:</strong></td>
-			<td>#capitalize(get("environment"))#<cfset loc.environments = "design,development,testing,maintenance,production"> [<cfset loc.pos = 0><cfloop list="#loc.environments#" index="loc.i"><cfset loc.pos = loc.pos + 1><cfif get("environment") IS NOT loc.i><a href="#loc.baseReloadURL##loc.enc[loc.i]#">#capitalize(loc.i)#</a><cfif ListLen(loc.environments) GT loc.pos>, </cfif></cfif></cfloop>]</td>
+			<td>#capitalize(get("environment"))# [<cfloop list="#loc.environments#" index="loc.i"><cfset loc.pos = loc.pos + 1><cfif get("environment") IS NOT loc.i><a href="#loc.baseReloadURL##loc.enc[loc.i]#">#capitalize(loc.i)#</a><cfif ListLen(loc.environments) GT loc.pos>, </cfif></cfif></cfloop>]</td>
 		</tr>
 		<tr>
 			<td valign="top"><strong>URL Rewriting:</strong></td>

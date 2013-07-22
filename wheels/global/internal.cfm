@@ -1000,7 +1000,7 @@ Should now call bar() instead and marking foo() as deprecated
 	<cfargument name="settingPasswordToSwitchEnvironmentKey" type="string" required="false" default="reloadPassword" hint="the setting that tell us the password for switching environments">
 	<cfargument name="scopeEnvironmentNamingKey" type="string" required="false" default="reload" hint="the key in the scope that gives us the environment name to switch to">
 	<cfargument name="scopeEnvironmentPasswordKey" type="string" required="false" default="password" hint="the key in the scope that gives us the password for switching environment">
-	<cfargument name="scopeEnvironmentEncrypted" type="string" required="false" default="true" hint="the key in the scope that gives us the password for switching environment">
+	<cfargument name="scopeEnvironmentEncrypted" type="string" required="false" default="true" hint="flag that the encrypted URL-style reload is being used">
 	<cfscript>
 	var loc = {};
 
